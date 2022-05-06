@@ -38,6 +38,19 @@ services:
 
 
 
+  auth:
+    container_name: auth
+    build:
+      context: ./auth
+      dockerfile: Dockerfile
+    ports:
+      - '3030:3000'
+    depends_on: [dbs]
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgres://popug@dbs:5432/auth
+      RAILS_LOG_TO_STDOUT: 1
+    command: ['bundle', 'exec', 'rails', 's', '-b', '0.0.0.0', '-p', '3000']
 
 volumes:
   dbdata: {}
