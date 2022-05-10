@@ -52,7 +52,7 @@ services:
       RAILS_ENV: development
       DATABASE_URL: postgres://popug@dbs:5432/auth
       RAILS_LOG_TO_STDOUT: 1
-    command: ['bundle', 'exec', 'rails', 's', '-b', '0.0.0.0', '-p', '3700']
+    command: sh -c 'rm -rf tmp/pids && bundle exec rails s -b  0.0.0.0 -p 3700'
     volumes:
       - ./auth:/app:cached
 

@@ -22,13 +22,13 @@ WORKDIR /app
 #     chmod 2777 -R $user /app
 
 # Create a group and user
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+# RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 # Tell docker that all future commands should run as the appuser user
 
 COPY . /app
-RUN chown -R appuser /app
-USER appuser
+#RUN chown -R appuser /app
+#USER appuser
 RUN bundle config set --local without 'development test'
 RUN bundle install --without development test
 # RUN yarn install --check-files

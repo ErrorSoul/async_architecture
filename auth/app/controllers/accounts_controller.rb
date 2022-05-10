@@ -1,5 +1,7 @@
 class AccountsController < ApplicationController
+  before_action :check_auth, only: %i[index show update destroy]
   before_action :set_account, only: %i[ show edit update destroy ]
+  # before_action :doorkeeper_authorize!, only: %i[index ]
 
   # GET /accounts or /accounts.json
   def index
@@ -19,16 +21,26 @@ class AccountsController < ApplicationController
   def edit
   end
 
+  def current
+
+    render json: current_account
+  end
+
+  def sign_up
+    @account = Account.new
+  end
+
   # POST /accounts or /accounts.json
   def create
-    @account = Account.new(account_params)
+    @account = Account.new(user_params)
 
     respond_to do |format|
       if @account.save
+        session[:account_id] = @account.id
         format.html { redirect_to account_url(@account), notice: "Account was successfully created." }
         format.json { render :show, status: :created, location: @account }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        format.html { render :sign_up, status: :unprocessable_entity }
         format.json { render json: @account.errors, status: :unprocessable_entity }
       end
     end
@@ -57,6 +69,12 @@ class AccountsController < ApplicationController
     end
   end
 
+  def log_out
+    session.delete(:account_id)
+    @current_account = nil
+    redirect_to root_url
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_account
@@ -66,5 +84,9 @@ class AccountsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def account_params
       params.require(:account).permit(:email, :password_digest, :role)
+    end
+
+    def user_params
+      params.require(:account).permit(:email, :password, :password_confirmation)
     end
 end
